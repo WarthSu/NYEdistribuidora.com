@@ -4,6 +4,10 @@
     { "src": "index.html", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "^/$", "status": 308, "headers": { "Location": "/inicio" } },
+    { "src": "^/index\\.html$", "status": 308, "headers": { "Location": "/inicio" } },
+    { "handle": "filesystem" },
+    { "src": "^/inicio$", "dest": "/index.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
