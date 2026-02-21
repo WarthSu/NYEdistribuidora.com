@@ -1,0 +1,64 @@
+/* loader.css - estilos del splash screen */
+#loader {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6));
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 16, 16, 0.78);
+  backdrop-filter: blur(10px);
+  filter: blur(6px);
+  transform: scale(1.05);
+}
+
+.loader-stage {
+  position: relative;
+  z-index: 10;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* estilos logo inicial */
+#logo {
+  width: 160px;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* posicionamiento del logo cuando se mueve a top-right */
+#logo-top {
+  transition: transform 0.8s ease, opacity 0.8s ease;
+  display: block;
+  opacity: 0; /* se mostrará cuando termine la animación */
+}
+
+/* estilos para el nav cuando aparece */
+#site-header {
+  transition: transform 0.6s ease, opacity 0.6s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* cuando sea visible (clase .visible) */
+#site-header.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* mobile friendly */
+@media (max-width: 768px) {
+  .loader-stage {
+    width: 260px;
+    height: 260px;
+  }
+  #logo {
+    width: 130px;
+  }
+}

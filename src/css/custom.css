@@ -1,0 +1,333 @@
+:root {
+  --ne-green: #87f5b3;
+  --ne-gold: #d9b38c;
+  --ne-dark: #07130b;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f7e4a;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #15963d;
+}
+
+/* ===== HERO TITLE STYLES ===== */
+.hero-title {
+  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  text-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+/* ===== SCROLL FADE EFFECT ===== */
+.scroll-fade {
+  opacity: 1;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.is-hidden {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+/* ===== NAVIGATION LINK STYLES ===== */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease;
+  font-weight: 500;
+  padding-bottom: 4px;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #1f7e4a, #87f5b3);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ===== LOGO NAV LINK ===== */
+.logo-nav-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.logo-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+/* ===== HEADER / NAV BAR STYLES (PRO) ===== */
+#site-header {
+  background: linear-gradient(180deg, rgba(165,189,143,0.98), rgba(135,173,120,0.9));
+  box-shadow: 0 8px 30px rgba(12, 38, 18, 0.18), inset 0 -1px 0 rgba(255,255,255,0.03);
+  backdrop-filter: blur(6px);
+}
+
+#site-header .logo-nav-link img {
+  width: 48px;
+  height: auto;
+  display: block;
+}
+
+/* centrar el nav y asegurar legibilidad */
+.nav-link { color: #0f4f2d; }
+.nav-link:hover { color: #062f17; }
+
+/* hamburguesa más visible */
+#btnMenu span { background: #073d21; }
+
+/* ===== FOOTER ESTILOS ===== */
+.site-footer {
+  background: #f3f4f6; /* gris claro */
+  color: #1f2937; /* texto oscuro legible */
+  border-radius: 8px;
+  padding: 24px;
+}
+.site-footer p { margin: 0; }
+
+/* ===== HEADER STATES (SCROLL / HOVER / OVER HERO) ===== */
+#site-header {
+  transition: background-color .35s ease, transform .35s ease, box-shadow .35s ease, opacity .35s ease, backdrop-filter .35s ease;
+  background-color: rgba(255,255,255,0.08); /* ligeramente translúcido por defecto */
+}
+
+/* Cuando el header está encima del hero (al inicio): enlaces claros */
+.header-over-hero {
+  background-color: rgba(8, 16, 10, 0.18); /* ligero tono oscuro para contraste con la imagen */
+  backdrop-filter: blur(4px);
+}
+.header-over-hero .nav-link { color: #ffffff; }
+
+/* Cuando el usuario ha scrolleado fuera del hero */
+.header-scrolled {
+  background-color: rgba(255,255,255,0.98);
+  box-shadow: 0 10px 40px rgba(3, 32, 12, 0.12);
+  transform: translateY(-4px);
+}
+.header-scrolled .nav-link { color: #06331a; }
+
+/* Hover: cuando el puntero se acerca, relaja y muestra totalmente */
+#site-header.header-hover, #site-header:hover {
+  background-color: rgba(255,255,255,0.98)!important;
+  backdrop-filter: blur(6px);
+  transform: translateY(0);
+}
+#site-header.header-hover .nav-link, #site-header:hover .nav-link { color: #062f17 !important; }
+
+/* Transición suave para la imagen del hero (usada por GSAP) */
+.hero-bg {
+  transition: transform .3s ease, filter .3s ease;
+}
+
+
+/* ===== INTERACTIVE ELEMENTS ===== */
+button, a {
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* ===== FORM INPUTS ===== */
+input, textarea {
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  transform: scale(1.02);
+}
+
+/* ===== ACCESSIBILITY ===== */
+*:focus-visible {
+  outline: 2px solid #1f7e4a;
+  outline-offset: 2px;
+}
+
+/* ===== MOBILE MENU OPEN STATE ===== */
+#mobileMenu {
+  /* right transition ya está aplicado con tailwind, pero aseguramos prioridad */
+  transition: right 0.3s ease;
+}
+#mobileMenu.open {
+  right: 0 !important;
+}
+
+
+/* ===== SMOOTH SCROLL BEHAVIOR ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== STYLES DURANTE LOADING ===== */
+body.is-loading {
+  overflow: hidden;
+}
+
+/* ocultar contenido principal mientras carga (se usa overlay blureado) */
+body.is-loading main {
+  visibility: hidden;
+}
+
+/* mantener visible sólo el logo pequeño del header (pero ocultar enlaces/texto) */
+body.is-loading .nav-link,
+body.is-loading #btnMenu {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ocultar texto al lado del logo en header mientras carga */
+body.is-loading .logo-nav-link span {
+  opacity: 0;
+}
+
+
+/* ===== SECTION ANIMATIONS ===== */
+.section-content {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===== IMAGE SEQUENCE STYLES ===== */
+.image-sequence {
+  position: relative;
+  width: 100%;
+  height: auto;  /* Respetar la altura definida en Tailwind */
+  min-height: 24rem; /* 384px - h-96 */
+  overflow: hidden;
+  display: block;
+  aspect-ratio: auto;  /* Let height define the aspect */
+}
+@media (min-width: 769px) {
+  .image-sequence {
+    height: 650px;
+  }
+}
+.image-column {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-width: 0;  /* Permite que el grid fluya correctamente */
+}
+.text-column {
+  width: 100%;
+  min-width: 0;  /* Importante para overflow en grid */
+  max-height: 650px; /* altura balanceada con las imágenes */
+  overflow-y: auto;
+  padding-right: 0.75rem;
+}
+.text-column::-webkit-scrollbar { width: 8px; }
+.text-column::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 6px; }
+
+@media (max-width: 768px) {
+  .image-column { max-width: none; margin: 0; }
+  .text-column { max-height: none; overflow: visible; padding-right: 0; }
+  .image-sequence { min-height: 16rem; }
+}
+
+/* No override grid - let Tailwind handle it */
+.image-text-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3rem; /* aumento de 2rem a 3rem para más espaciamiento */
+}
+
+/* Mobile: single column */
+@media (max-width: 768px) {
+  .image-text-grid { 
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.image-sequence img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;  /* mostrar por defecto */
+  filter: blur(0px);
+  transition: opacity .22s ease, filter .22s ease, transform .22s ease;
+  transform-origin: center center;
+  will-change: opacity, filter, transform;
+  z-index: 10;
+  display: block;
+}
+
+/* Alinear Paisaje2 al borde derecho en pantallas grandes */
+@media (min-width: 768px) {
+  #nosotros-sequence {
+    width: 75vw;
+    max-width: 900px;
+    margin-left: auto; /* empuja a la derecha */
+  }
+}
+.image-sequence img.active { opacity: 1 !important; }
+
+
+/* placeholder dentro del contenedor de secuencia */
+.seq-placeholder { background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3)); }
+
+/* ===== MOBILE MENU OPEN STATE ===== */
+#mobileMenu {
+  transition: right 0.3s ease;
+}
+#mobileMenu.open {
+  right: 0 !important;
+}
+

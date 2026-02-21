@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Tailwind directives above - build with Tailwind CLI or your toolchain */
+
+/* ===== Animación del Loader ===== */
+@keyframes logoZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-logo-zoom {
+  animation: logoZoom 1.8s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.6s ease-out forwards;
+}
+
+/* ===== Estados de Visibilidad ===== */
+.invisible {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}

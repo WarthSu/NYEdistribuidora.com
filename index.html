@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Distribuidora N&E: productos frescos para negocios y hogares, conectando directamente a campesinos con clientes en Bogotá y toda Colombia. Calidad y logística eficiente.">
+    <meta name="theme-color" content="#A5BD8F">
+    <!-- mejorar tiempos de carga preconectando y precargando los scripts externos -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin="anonymous">
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.min.js" crossorigin="anonymous">
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollToPlugin.min.js" crossorigin="anonymous">
+
+    <title>N&E – Distribuidora</title>
+    <link rel="stylesheet" href="src/css/output.css">
+    <link rel="stylesheet" href="src/css/custom.css">
+    <link rel="stylesheet" href="src/animations/loader.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+
+<body class="bg-[#A5BD8F] text-gray-900 is-loading">
+    <a href="#app" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-white text-green-900 px-4 py-2 rounded">Ir al contenido</a>
+    <noscript>
+      <div class="bg-red-500 text-white p-4 text-center">
+        Para una mejor experiencia habilita JavaScript en tu navegador.
+      </div>
+    </noscript>
+
+    <!-- =========================
+          LOADER / SPLASH SCREEN
+    ========================== -->
+    <div id="loader" role="status" aria-live="polite" class="fixed inset-0 flex items-center justify-center z-[9999]">
+        <div class="loader-backdrop absolute inset-0"></div>
+        <div class="loader-stage relative flex items-center justify-center">
+            <img src="src/assets/logo.svg" 
+                 id="logo"
+                 alt="Logo N&E"
+                 class="w-40 opacity-0 animate-logo-zoom">
+        </div>
+    </div>
+
+    <!-- =========================
+          NAVBAR / HEADER
+    ========================== -->
+    <header id="site-header" class="fixed top-0 left-0 w-full px-6 py-4 bg-[#A5BD8F]/95 backdrop-blur-md z-50 transition-all duration-300">
+        <div class="relative flex items-center w-full max-w-7xl mx-auto">
+            <!-- Logo a la izquierda -->
+            <div class="flex items-center">
+                <a href="#inicio" class="logo-nav-link flex items-center gap-3 transition-all duration-300 hover:opacity-90">
+                    <img src="src/assets/Logo.svg"
+                         id="logo-top" aria-hidden="true"
+                         class="w-12 transition-transform duration-300" 
+                         alt="Logo N&E">
+                </a>
+            </div>
+
+            <!-- Menú centrado en desktop -->
+            <nav class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 gap-10 text-lg font-medium">
+                <a href="#inicio" class="nav-link text-green-900 hover:text-green-700">Inicio</a>
+                <a href="#nosotros" class="nav-link text-green-900 hover:text-green-700">Quiénes Somos</a>
+                <a href="#servicios" class="nav-link text-green-900 hover:text-green-700">Servicios</a>
+                <a href="#contacto" class="nav-link text-green-900 hover:text-green-700">Contacto</a>
+            </nav>
+
+            <!-- BOTÓN HAMBURGUESA a la derecha en mobile -->
+            <div class="ml-auto md:hidden">
+                <button id="btnMenu" class="flex flex-col gap-1.5 focus:outline-none group"
+                        aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">
+                    <span class="w-7 h-1 bg-green-900 block transition-all duration-300 group-hover:bg-green-700"></span>
+                    <span class="w-7 h-1 bg-green-900 block transition-all duration-300 group-hover:bg-green-700"></span>
+                    <span class="w-7 h-1 bg-green-900 block transition-all duration-300 group-hover:bg-green-700"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- =========================
+          MENÚ DESPLEGABLE MOBILE
+    ========================== -->
+    <nav id="mobileMenu" role="navigation" aria-hidden="true"
+         class="fixed top-0 right-[-100%] w-2/3 h-screen bg-[#A5BD8F] shadow-2xl p-10 flex flex-col gap-8 
+                 text-xl font-semibold transition-all duration-300 z-40 pt-20">
+
+        <a href="#inicio" class="text-green-900 hover:text-green-700 transition-colors text-2xl font-bold">Inicio</a>
+        <a href="#nosotros" class="text-green-900 hover:text-green-700 transition-colors text-2xl font-bold">Quiénes Somos</a>
+        <a href="#servicios" class="text-green-900 hover:text-green-700 transition-colors text-2xl font-bold">Servicios</a>
+        <a href="#contacto" class="text-green-900 hover:text-green-700 transition-colors text-2xl font-bold">Contacto</a>
+    </nav>
+
+    <!-- =========================
+          CONTENIDO PRINCIPAL
+    ========================== -->
+    <main id="app" class="opacity-100" role="main" tabindex="-1">
+
+        <!-- HERO SECTION / INICIO -->
+        <section id="inicio"
+                 class="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-6 pt-32 pb-20 bg-gradient-to-b from-[#A5BD8F] to-[#8fa576]">
+
+            <!-- Imagen de fondo completa (Paisaje9) -->
+            <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+                 <img src="src/assets/Principal1.jpg" 
+                     alt="Paisaje" loading="lazy"
+                     class="hero-bg absolute inset-0 w-full h-full object-cover object-center z-0"
+                     style="filter: brightness(1.1) contrast(1.15) saturate(1.1); -webkit-filter: brightness(1.1) contrast(1.15) saturate(1.1);">
+                 <div class="absolute inset-0 bg-black/40 z-20"></div>
+            </div>
+
+            <div class="relative z-30 max-w-3xl">
+                <h1 class="hero-title text-5xl md:text-7xl font-bold text-white drop-shadow-lg mb-6">
+                    N&E – Distribuidora
+                </h1>
+
+                <p class="text-xl md:text-2xl text-white max-w-2xl mx-auto leading-relaxed mb-10">
+                    Calidad, frescura y confianza para tu vida.
+                </p>
+
+                <a href="#servicios" class="inline-block mt-10 px-10 py-4 bg-green-600 text-white rounded-lg 
+                                         hover:bg-green-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl">
+                    Conoce Nuestros Servicios
+                </a>
+            </div>
+        </section>
+
+        <!-- SECCIÓN QUIÉNES SOMOS -->
+        <section id="nosotros" class="w-full pt-32 pb-20 px-6 bg-white">
+            <div class="max-w-full w-full">
+                <div class="grid grid-cols-1 gap-8 items-start image-text-grid">
+                    <!-- Texto a la izquierda -->
+                    <div class="section-content text-column md:max-h-[500px] md:overflow-y-auto pr-2 md:pr-0 md:px-8">
+                        <h2 class="text-4xl md:text-5xl font-bold text-green-900 mb-6">
+                            Quiénes Somos
+                        </h2>
+                        <p class="text-lg md:text-xl text-gray-700 leading-relaxed mb-4">
+                            Somos una empresa dedicada a llevar a negocios y hogares de Bogotá productos frescos provenientes de Corabastos, del campo y de diferentes regiones del país. Impulsamos un modelo que conecta directamente a campesinos con compradores para obtener un pago justo.
+                        </p>
+                        <p class="text-lg md:text-xl text-gray-700 leading-relaxed mb-4">
+                            Trabajamos con altos estándares de manipulación e higiene, garantizando que frutas y verduras lleguen con frescura y seguridad. Nos especializamos en procesos logísticos diseñados para responder con rapidez, puntualidad y transparencia.
+                        </p>
+                        <p class="text-lg md:text-xl text-gray-700 leading-relaxed">
+                            Atendemos restaurantes, fruterías, asaderos, tiendas y hogares con abastecimiento confiable. Nuestro compromiso: calidad, frescura y eficiencia hasta tu puerta.
+                        </p>
+                    </div>
+
+                    <!-- Imagen a la derecha (secuencia) -->
+                    <div>
+                        <div id="nosotros-sequence" class="image-sequence image-column w-full md:h-[500px] md:sticky md:top-24 rounded-lg shadow-lg overflow-hidden relative bg-gray-200">
+                            <!-- fallback estática para garantizar visibilidad sin JS -->
+                            <img src="src/assets/Section1.jpg?v=2" alt="" aria-hidden="true"
+                                 class="seq-fallback absolute inset-0 w-full h-full object-cover object-center z-10" />
+                            <!-- Images will be injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN SERVICIOS -->
+        <section id="servicios" class="w-full py-20 px-6 bg-gray-50">
+            <div class="max-w-full w-full">
+                <div class="grid grid-cols-1 gap-8 items-start image-text-grid">
+                    <!-- Imagen a la izquierda (secuencia) -->
+                    <div>
+                        <div id="servicios-sequence" class="image-sequence image-column w-full md:h-[500px] md:sticky md:top-24 rounded-lg shadow-lg overflow-hidden relative bg-gray-200">
+                            <!-- fallback estática para garantizar visibilidad sin JS -->
+                            <img src="src/assets/Section2.jpg?v=2" alt="" aria-hidden="true"
+                                 class="seq-fallback absolute inset-0 w-full h-full object-cover object-center z-10" />
+                            <!-- Images will be injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Texto a la derecha -->
+                    <div class="section-content text-column md:max-h-[500px] md:overflow-y-auto pr-2 md:pr-0 md:px-8">
+                        <h2 class="text-4xl md:text-5xl font-bold text-green-900 mb-6">
+                            Nuestros Servicios
+                        </h2>
+                        <p class="text-lg md:text-xl text-gray-700 leading-relaxed mb-4">
+                            Desempeñamos un proceso logístico eficiente sin costo de entrega. Aseguramos que cada cliente reciba alimentos de alta calidad en óptimas condiciones.
+                        </p>
+                        <p class="text-lg md:text-xl text-gray-700 leading-relaxed mb-6">
+                            Nos especializamos en procesos rápidos, puntuales y transparentes para todo tipo de negocios y hogares.
+                        </p>
+
+                        <!-- Lista de servicios -->
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-600 text-xl font-bold">✓</span>
+                                <span class="text-gray-700 text-lg md:text-xl">Distribución sin costo a horarios flexibles</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-600 text-xl font-bold">✓</span>
+                                <span class="text-gray-700 text-lg md:text-xl">Productos garantizados con alta frescura</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-600 text-xl font-bold">✓</span>
+                                <span class="text-gray-700 text-lg md:text-xl">Manejo con estándares de seguridad alimentaria</span>
+                        </ul>
+
+                        <a href="#contacto" class="inline-block px-8 py-3 bg-green-600 text-white rounded-lg 
+                                               hover:bg-green-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl text-sm md:text-base">
+                            Contáctanos Hoy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN CONTACTO / FOOTER -->
+        <section id="contacto" class="w-full min-h-screen flex flex-col items-center justify-center px-6 py-20 bg-gradient-to-br from-green-900 to-green-800">
+            <div class="max-w-6xl w-full">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
+                    Contacto
+                </h2>
+                <p class="text-xl text-green-100 text-center mb-16 max-w-2xl mx-auto">
+                    Quieres hacer un pedido, tienes preguntas o quieres saber más sobre nuestros servicios? Contáctanos, estamos aquí para ayudarte a llevar frescura y calidad a tu negocio o hogar.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                    <!-- Teléfono -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-8 text-center hover:bg-white/20 transition-all duration-300">
+                        <div class="text-4xl mb-4">📱</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Teléfono</h3>
+                        <p class="text-green-100">321-395-3522</p>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-8 text-center hover:bg-white/20 transition-all duration-300">
+                        <div class="text-4xl mb-4">📧</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Correo</h3>
+                        <p class="text-green-100">NyEpedidos@gmail.com</p>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-8 text-center hover:bg-white/20 transition-all duration-300">
+                        <div class="text-4xl mb-4">📍</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Bogotá Colombia</h3>
+                        <p class="text-green-100"> Av. Carrera 80 No. 2-51</p>
+                    </div>
+
+                    <!-- Horario -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-8 text-center hover:bg-white/20 transition-all duration-300">
+                        <div class="text-4xl mb-4">🕐</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Horario</h3>
+                        <p class="text-green-100">Lunes a Viernes: 8:00 AM - 6:00 PM</p>
+                    </div>
+                </div>
+
+                <!-- Formulario de contacto -->
+                <div class="max-w-2xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg p-10 mb-16">
+                    <form class="flex flex-col gap-6">
+                        <input name="name" type="text" placeholder="Tu nombre" required
+                               class="w-full px-6 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-300">
+                        <input name="email" type="email" placeholder="Tu correo" required
+                               class="w-full px-6 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-300">
+                        <textarea name="message" placeholder="Tu mensaje" rows="5" required
+                                  class="w-full px-6 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-300 resize-none"></textarea>
+                        <button type="submit" class="bg-green-400 text-green-900 font-bold py-4 rounded-lg 
+                                                   hover:bg-green-300 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <footer class="site-footer mt-8 pt-10 text-center">
+                    <p class="mb-2">© 2025 N&E Distribuidora. Todos los derechos reservados.</p>
+                    <p class="text-sm">Hecho con 💚 para tu negocio</p>
+                </footer>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Botón WhatsApp Flotante -->
+    <a href="https://wa.me/+573213953522" target="_blank" rel="noopener noreferrer" 
+       class="whatsapp-btn"
+       aria-label="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <style>
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 32px;
+            left: 32px;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            background-color: #25D366;
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s ease;
+            font-size: 28px;
+            text-decoration: none;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.6);
+        }
+
+        .whatsapp-btn:active {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .whatsapp-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 6px;
+                left: 6px;
+                font-size: 24px;
+            }
+        }
+    </style>
+
+    <!-- SCRIPTS -->
+    <script type="module" src="src/js/main.js"></script>
+    <script type="module" src="src/js/scroll.js"></script>
+</body>
+</html>
