@@ -1,13 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" }
+  "redirects": [
+    { "source": "/", "destination": "/inicio", "permanent": true },
+    { "source": "/index.html", "destination": "/inicio", "permanent": true }
   ],
-  "routes": [
-    { "src": "^/$", "status": 308, "headers": { "Location": "/inicio" } },
-    { "src": "^/index\\.html$", "status": 308, "headers": { "Location": "/inicio" } },
-    { "handle": "filesystem" },
-    { "src": "^/inicio$", "dest": "/index.html" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/inicio", "destination": "/index.html" }
   ]
 }
