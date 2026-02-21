@@ -3,15 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Distribuidora N&E: productos frescos para negocios y hogares, conectando directamente a campesinos con clientes en Bogotá y toda Colombia. Calidad y logística eficiente.">
+    <meta name="description" content="N&E Distribuidora: frutas y verduras frescas para negocios y hogares en Bogota y Colombia. Calidad, puntualidad y logistica eficiente.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="author" content="N&E Distribuidora">
     <meta name="theme-color" content="#A5BD8F">
+    <link rel="canonical" href="https://nyedistribuidora.com/inicio">
     <link rel="icon" type="image/svg+xml" href="src/assets/Favicon.svg">
+    <link rel="apple-touch-icon" href="src/assets/Favicon.svg">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:site_name" content="N&E Distribuidora">
+    <meta property="og:title" content="N&E Distribuidora | Frutas y verduras frescas">
+    <meta property="og:description" content="Abastecimiento de frutas y verduras para hogares y negocios con calidad, frescura y entregas puntuales.">
+    <meta property="og:url" content="https://nyedistribuidora.com/inicio">
+    <meta property="og:image" content="https://nyedistribuidora.com/src/assets/Principal1.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="N&E Distribuidora | Frutas y verduras frescas">
+    <meta name="twitter:description" content="Distribucion confiable de productos frescos para hogares y negocios.">
+    <meta name="twitter:image" content="https://nyedistribuidora.com/src/assets/Principal1.jpg">
     <!-- mejorar tiempos de carga preconectando y precargando los scripts externos -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin="anonymous">
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.min.js" crossorigin="anonymous">
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollToPlugin.min.js" crossorigin="anonymous">
 
-    <title>N&E – Distribuidora</title>
+    <title>N&E Distribuidora | Frutas y verduras frescas en Bogota</title>
     <link rel="stylesheet" href="src/css/output.css">
     <link rel="stylesheet" href="src/css/custom.css">
     <link rel="stylesheet" href="src/animations/loader.css">
@@ -32,7 +47,7 @@
     <div id="loader" role="status" aria-live="polite" class="fixed inset-0 flex items-center justify-center z-[9999]">
         <div class="loader-backdrop absolute inset-0"></div>
         <div class="loader-stage relative flex items-center justify-center">
-            <img src="src/assets/logo.svg" 
+            <img src="src/assets/Logo.svg" 
                  id="logo"
                  alt="Logo N&E"
                  class="w-40 opacity-0 animate-logo-zoom">
@@ -193,6 +208,7 @@
                             <li class="flex items-start gap-3">
                                 <span class="text-green-600 text-xl font-bold">✓</span>
                                 <span class="text-gray-700 text-lg md:text-xl">Manejo con estándares de seguridad alimentaria</span>
+                            </li>
                         </ul>
 
                         <a href="#contacto" class="inline-block px-8 py-3 bg-green-600 text-white rounded-lg 
@@ -318,6 +334,38 @@
     </style>
 
     <!-- SCRIPTS -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "name": "N&E Distribuidora",
+            "url": "https://nyedistribuidora.com/inicio",
+            "logo": "https://nyedistribuidora.com/src/assets/Logo.svg",
+            "image": "https://nyedistribuidora.com/src/assets/Principal1.jpg",
+            "telephone": "+57 321 395 3522",
+            "email": "NyEpedidos@gmail.com",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Av. Carrera 80 No. 2-51",
+                "addressLocality": "Bogota",
+                "addressCountry": "CO"
+            },
+            "openingHoursSpecification": [
+                {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": [
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday"
+                    ],
+                    "opens": "08:00",
+                    "closes": "18:00"
+                }
+            ]
+        }
+    </script>
     <script type="module" src="src/js/main.js"></script>
     <script type="module" src="src/js/scroll.js"></script>
 </body>
