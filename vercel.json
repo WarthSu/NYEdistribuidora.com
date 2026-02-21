@@ -2,12 +2,9 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/", "destination": "/inicio", "permanent": false },
-    { "source": "/index", "destination": "/inicio", "permanent": true },
-    { "source": "/index.html", "destination": "/inicio", "permanent": true }
-  ],
-  "rewrites": [
-    { "source": "/inicio", "destination": "/index.html" },
-    { "source": "/inicio/", "destination": "/index.html" }
+    { "source": "/inicio", "destination": "/", "permanent": false },
+    { "source": "/inicio/", "destination": "/", "permanent": false },
+    { "source": "/index", "destination": "/", "permanent": true },
+    { "source": "/index.html", "destination": "/", "permanent": true }
   ]
 }
