@@ -224,12 +224,14 @@ function initializeTypewriterSection() {
     };
     tick();
   });
+  const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const runSequence = async () => {
     if (hasRun) return;
     hasRun = true;
 
     await typeText(firstText, 62);
+    await pause(1000);
     textEl.textContent = '';
     await typeText(secondText, 52);
     section.classList.add('is-done');
