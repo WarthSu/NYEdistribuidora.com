@@ -2,8 +2,9 @@
 import gsap from "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.min.js";
 import ScrollTrigger from "https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollTrigger.min.js";
 
-// activa los mensajes y elementos de depuración (set to true sólo durante desarrollo)
+// activa los mensajes y elementos de depuracion (set to true solo durante desarrollo)
 const DEBUG = false;
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +13,11 @@ gsap.registerPlugin(ScrollTrigger);
  */
 function animateHeroOnScroll() {
   const heroTitle = document.querySelector('.hero-title');
+
+  if (prefersReducedMotion && heroTitle) {
+    gsap.set(heroTitle, { y: 0, opacity: 1 });
+    return;
+  }
 
   if (heroTitle) {
     gsap.to(heroTitle, {
@@ -34,9 +40,14 @@ function animateHeroOnScroll() {
 function animateSectionsOnScroll() {
   const sections = document.querySelectorAll('section');
 
+  if (prefersReducedMotion) {
+    gsap.set(sections, { opacity: 1, y: 0 });
+    return;
+  }
+
   sections.forEach((section) => {
     // Skip sections that have image sequences (they use pin + their own animation)
-    if (section.id === 'nosotros' || section.id === 'servicios') return;
+    if (section.id === 'nosotros' || section.id === 'servicios' || section.id === 'contacto') return;
     gsap.fromTo(section,
       { opacity: 0, y: 30 },
       {
@@ -62,13 +73,18 @@ function animateSectionsOnScroll() {
 function animateSectionContent() {
   const contentElements = document.querySelectorAll('.section-content');
 
+  if (prefersReducedMotion) {
+    gsap.set(contentElements, { opacity: 1, x: 0 });
+    return;
+  }
+
   contentElements.forEach((element) => {
-    // Determina si la sección es "nosotros" o "servicios" para la dirección de entrada
+    // Determina si la seccion es "nosotros" o "servicios" para la direccion de entrada
     const section = element.closest('section');
     const isNosotros = section && section.id === 'nosotros';
     const isServicios = section && section.id === 'servicios';
     
-    // Establece la dirección de entrada
+    // Establece la direccion de entrada
     const xFrom = isServicios ? 30 : -30; // Derecha para servicios, izquierda para nosotros
     
     gsap.fromTo(element,
@@ -86,16 +102,159 @@ function animateSectionContent() {
         }
       }
     );
+
+    const textItems = element.querySelectorAll('p, li, a.inline-block');
+    if (textItems.length) {
+      gsap.set(textItems, { opacity: 1 });
+      gsap.from(textItems, {
+        opacity: 0,
+        y: isServicios ? 16 : 22,
+        duration: isServicios ? 0.45 : 0.6,
+        stagger: isServicios ? 0.07 : 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: element,
+          start: 'top 72%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+    }
+
   });
 }
 
-// Ejecutar animaciones cuando el DOM esté listo
+/**
+ * Entrada suave para encabezados de seccion
+ */
+function splitHeadingWords(element) {
+  if (!element) return [];
+  if (element.dataset.wordsReady === 'true') {
+    return Array.from(element.querySelectorAll('.word-split'));
+  }
+
+  const rawText = (element.textContent || '').trim();
+  if (!rawText) return [];
+
+  const words = rawText.split(/\s+/);
+  const fragment = document.createDocumentFragment();
+  const wordNodes = [];
+
+  element.setAttribute('aria-label', rawText);
+
+  words.forEach((word, index) => {
+    const span = document.createElement('span');
+    span.className = 'word-split';
+    span.textContent = word;
+    span.setAttribute('aria-hidden', 'true');
+    fragment.appendChild(span);
+    wordNodes.push(span);
+
+    if (index < words.length - 1) {
+      fragment.appendChild(document.createTextNode(' '));
+    }
+  });
+
+  element.textContent = '';
+  element.appendChild(fragment);
+  element.dataset.wordsReady = 'true';
+  return wordNodes;
+}
+
+function animateSectionHeadings() {
+  const headings = document.querySelectorAll('section h2');
+
+  if (prefersReducedMotion) {
+    gsap.set(headings, { opacity: 1, y: 0 });
+    return;
+  }
+
+  headings.forEach((heading) => {
+    const words = splitHeadingWords(heading);
+    const target = words.length ? words : heading;
+
+    gsap.fromTo(target,
+      { opacity: 0, y: 24, filter: 'blur(5px)' },
+      {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.5,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: heading,
+          start: 'top 82%'
+        }
+      }
+    );
+
+  });
+}
+
+// Ejecutar animaciones cuando el DOM este listo
+/**
+ * Seccion de maquina de escribir (una sola vez al entrar en viewport)
+ */
+function initializeTypewriterSection() {
+  const section = document.getElementById('mensaje-intro');
+  const textEl = document.getElementById('typewriter-text');
+  if (!section || !textEl) return;
+
+  const firstText = '¿Tienes fruver, fruteria o restaurante en Bogotá y pierdes tiempo valioso yendo a la plaza a surtirte? ';
+  const secondText = 'NOSOTROS LO HACEMOS POR TI';
+
+  if (prefersReducedMotion) {
+    textEl.textContent = secondText;
+    section.classList.add('is-done');
+    return;
+  }
+
+  let hasRun = false;
+
+  const typeText = (value, speed) => new Promise((resolve) => {
+    let i = 0;
+    const tick = () => {
+      textEl.textContent = value.slice(0, i);
+      i += 1;
+      if (i <= value.length) {
+        setTimeout(tick, speed);
+      } else {
+        resolve();
+      }
+    };
+    tick();
+  });
+
+  const runSequence = async () => {
+    if (hasRun) return;
+    hasRun = true;
+
+    await typeText(firstText, 62);
+    textEl.textContent = '';
+    await typeText(secondText, 52);
+    section.classList.add('is-done');
+  };
+
+  ScrollTrigger.create({
+    trigger: section,
+    start: 'top 68%',
+    once: true,
+    onEnter: runSequence
+  });
+}
 document.addEventListener('DOMContentLoaded', () => {
   try {
     if (DEBUG) console.log('[Scroll] DOMContentLoaded - initializing scroll animations');
     animateHeroOnScroll();
     animateSectionsOnScroll();
     animateSectionContent();
+    animateSectionHeadings();
+    initializeTypewriterSection();
+    animateContactCards();
+    animateServiceChecklist();
+    animateContactFormFields();
+    animateWhatsAppButton();
+    initializeActiveNavState();
     initializeHeaderBehavior();
 
     // Inicializar secuencias de imagen para 'nosotros' y 'servicios'
@@ -118,9 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /**
- * Crea una secuencia de imágenes que se cambia según el scroll (pin + scrub)
- * @param {string} sectionId Id de la sección (ej. 'nosotros')
- * @param {string[]} imagePaths Array con rutas relativas a las imágenes
+ * Crea una secuencia de imagenes que se cambia segun el scroll (pin + scrub)
+ * @param {string} sectionId Id de la seccion (ej. 'nosotros')
+ * @param {string[]} imagePaths Array con rutas relativas a las imagenes
  */
 function setupImageSequence(sectionId, imagePaths) {
   const section = document.getElementById(sectionId);
@@ -133,14 +292,14 @@ function setupImageSequence(sectionId, imagePaths) {
   const fallbackImg = container.querySelector('.seq-fallback');
   if (fallbackImg) {
     fallbackImg.addEventListener('load', () => {
-      console.log('[ImageSeq] fallback loaded for', sectionId);
+      if (DEBUG) console.log('[ImageSeq] fallback loaded for', sectionId);
     });
     fallbackImg.addEventListener('error', () => {
       console.error('[ImageSeq] fallback failed for', sectionId, fallbackImg.src);
     });
   }
 
-  // limpiar contenedor si ya tiene imágenes (pero conservar fallback estático)
+  // limpiar contenedor si ya tiene imagenes (pero conservar fallback estatico)
   const existingFallback = container.querySelector('.seq-fallback');
   container.innerHTML = '';
   if (existingFallback) container.appendChild(existingFallback);
@@ -150,7 +309,7 @@ function setupImageSequence(sectionId, imagePaths) {
   if (DEBUG) {
     placeholder = document.createElement('div');
     placeholder.className = 'seq-placeholder';
-    placeholder.textContent = 'Cargando imágenes...';
+    placeholder.textContent = 'Cargando imagenes...';
     placeholder.style.position = 'absolute';
     placeholder.style.inset = '0';
     placeholder.style.display = 'flex';
@@ -176,7 +335,7 @@ function setupImageSequence(sectionId, imagePaths) {
     container.appendChild(status);
   }
 
-  // helper: normalizar rutas para que sean absolutas desde la raíz
+  // helper: normalizar rutas para que sean absolutas desde la raiz
   const normalizePath = (p) => {
     if (!p) return p;
     // leave full URLs intact
@@ -256,26 +415,23 @@ function setupImageSequence(sectionId, imagePaths) {
     imgs[0].style.pointerEvents = 'none';
   }
 
-  // aplicar escalado inicial sólo si primera imagen es Paisaje1 en sección servicios
-  if (sectionId === 'servicios' && imgs[0] && imgs[0].src.includes('Paisaje1.jpg')) {
-    imgs[0].style.transform = 'scale(1.1)';
-  }
-
+  // estado visual inicial para la secuencia
   imgs.forEach((img, i) => {
     img.style.opacity = i === 0 ? '1' : '0';
-    img.style.filter = i === 0 ? 'blur(0px)' : 'blur(2px)';
-    img.style.transform = 'scale(1)';
+    img.style.filter = 'none';
+    img.style.transform = 'translate3d(0, 0, 0) scale(1)';
+    img.style.clipPath = i === 0
+      ? 'inset(0% 0% 0% 0% round 12px)'
+      : 'inset(8% 3% 8% 3% round 12px)';
+    img.style.willChange = 'opacity, transform, clip-path';
   });
 
-  // Ajustes para una transición más rápida y sutil
-  // Reduce aún más el scroll por imagen para cambios rápidos (35% desktop, 30% mobile)
-  const stepPercent = window.matchMedia('(max-width: 768px)').matches ? 30 : 35;
-  const totalPercent = imagePaths.length * stepPercent;
+  // Ajustes para una transicion mas rapida y sutil
 
-  // Asegurar que el contenedor tenga posición relativa y sea visible
+  // Asegurar que el contenedor tenga posicion relativa y sea visible
   container.style.position = container.style.position || 'relative';
   container.style.zIndex = container.style.zIndex || '20';
-  // Garantía de altura mínima por si algún reset CSS colapsa el elemento
+  // Garantia de altura minima por si algun reset CSS colapsa el elemento
   container.style.minHeight = container.style.minHeight || '12rem';
   // ligera marca para debugging visual (se puede remover luego)
   container.style.outline = container.style.outline || '2px solid rgba(0,0,0,0.06)';
@@ -290,7 +446,7 @@ function setupImageSequence(sectionId, imagePaths) {
   // definir referencia a la grilla antes de cualquier log que la use
   const gridEl = section.querySelector('.grid');
 
-  // Debug: log computed style y bounds (solo si está activado)
+  // Debug: log computed style y bounds (solo si esta activado)
   if (DEBUG) {
     try {
       const cs = getComputedStyle(container);
@@ -304,14 +460,14 @@ function setupImageSequence(sectionId, imagePaths) {
   // Si ninguna imagen carga en 2s, mostrar fallback embebido y mensaje de error en status
   setTimeout(() => {
     if (loaded === 0) {
-      console.warn('[ImageSeq] ninguna imagen cargó para', sectionId);
-      if (status) status.textContent = 'Error: no se cargaron imágenes';
-      // usar un placeholder embebido (data URI, pequeña imagen) para asegurar visibilidad
+      console.warn('[ImageSeq] ninguna imagen cargo para', sectionId);
+      if (status) status.textContent = 'Error: no se cargaron imagenes';
+      // usar un placeholder embebido (data URI, pequena imagen) para asegurar visibilidad
       const dataSvg = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450"><rect width="100%" height="100%" fill="#e6e6e6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#707070" font-size="20">Imagen no disponible</text></svg>');
       container.style.backgroundImage = `url(${dataSvg})`;
       container.style.backgroundSize = 'cover';
       container.style.backgroundPosition = 'center';
-      // además inyectar un <img> con la misma dataURI para asegurar visibilidad en todos los navegadores
+      // ademas inyectar un <img> con la misma dataURI para asegurar visibilidad en todos los navegadores
       const fallbackImg = document.createElement('img');
       fallbackImg.src = dataSvg;
       fallbackImg.alt = 'Placeholder';
@@ -323,17 +479,23 @@ function setupImageSequence(sectionId, imagePaths) {
       fallbackImg.style.opacity = '1';
       fallbackImg.style.zIndex = '999';
       container.appendChild(fallbackImg);
-      // quitar placeholder si por alguna razón quedó
+      // quitar placeholder si por alguna razon quedo
       if (placeholder && placeholder.parentElement) placeholder.parentElement.removeChild(placeholder);
     }
   }, 2000);
 
-  // gridEl ya fue calculado más arriba, solo validamos
+  // gridEl ya fue calculado mas arriba, solo validamos
   if (!gridEl) return;
 
   // ensure container and imgs are above other elements
   container.style.zIndex = container.style.zIndex || '20';
   imgs.forEach((img, idx) => { img.style.zIndex = idx === 0 ? '999' : '21'; });
+
+  if (prefersReducedMotion) return;
+  if (imagePaths.length <= 1) {
+    setupSingleImageMotion(section, container, imgs[0], sectionId);
+    return;
+  }
 
   ScrollTrigger.create({
     trigger: container,
@@ -348,24 +510,29 @@ function setupImageSequence(sectionId, imagePaths) {
       if (DEBUG) console.log('[ImageSeq] update', sectionId, 'progress', self.progress.toFixed(3), 'floatIdx', floatIdx.toFixed(3));
 
       imgs.forEach((img, i) => {
-        const dist = Math.abs(floatIdx - i);
-        const opacity = Math.max(0, 1 - dist);
-        // nunca poner blur en la imagen activa (dist===0)
-        const blur = dist === 0 ? 0 : Math.min(2, dist * 2);
-        // hacer más grande Paziale1 y asegurarse de que no se desenfoque
-        let scale = 1;
-        if (sectionId === 'servicios' && img.src.includes('Paisaje1.jpg')) {
-          scale = 1.1;
-        }
+        const signedDist = i - floatIdx;
+        const dist = Math.abs(signedDist);
+        const presence = gsap.utils.clamp(0, 1, 1 - dist);
+        const opacity = Math.pow(presence, 1.5);
+        // mantener escala 1 para preservar nitidez de las imagenes
+        const scale = 1;
+        const y = gsap.utils.clamp(-18, 18, signedDist * 14);
+        const x = gsap.utils.clamp(-10, 10, signedDist * 8);
+        const clipInset = gsap.utils.clamp(0, 8, dist * 8);
+        const dynamicZ = Math.max(20, Math.round((1 - dist) * 100) + 20);
+
+        img.style.zIndex = String(dynamicZ);
 
         gsap.to(img, {
           opacity,
-          // si se trata de Paisaje1 o Paisaje2 siempre sin blur
-          filter: (img.src.includes('Paisaje1.jpg') || img.src.includes('Paisaje2.jpg')) ? 'blur(0px)' : `blur(${blur}px)`,
+          filter: 'none',
           scale,
-          duration: 0.12,
-          ease: 'power1.out',
-          overwrite: true
+          x,
+          y,
+          clipPath: `inset(${clipInset}% ${clipInset * 0.35}% ${clipInset}% ${clipInset * 0.35}% round 12px)`,
+          duration: 0.26,
+          ease: 'power2.out',
+          overwrite: 'auto'
         });
       });
     },
@@ -373,6 +540,197 @@ function setupImageSequence(sectionId, imagePaths) {
   });
 }
 
+/**
+ * Animacion premium para secciones con una sola imagen
+ */
+function setupSingleImageMotion(section, container, img, sectionId) {
+  if (!section || !container || !img) return;
+
+  gsap.set(img, {
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    y: 0,
+    filter: 'none',
+    clipPath: 'inset(8% 3% 8% 3% round 12px)'
+  });
+
+  gsap.to(img, {
+    clipPath: 'inset(0% 0% 0% 0% round 12px)',
+    duration: 0.9,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: container,
+      start: 'top 82%',
+      toggleActions: 'play none none reverse'
+    }
+  });
+
+  gsap.to(img, {
+    yPercent: sectionId === 'servicios' ? -6 : -4,
+    xPercent: sectionId === 'servicios' ? -1.5 : 1.5,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: section,
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  gsap.fromTo(container,
+    { boxShadow: '0 10px 24px rgba(0,0,0,0.16)' },
+    {
+      boxShadow: '0 24px 48px rgba(0,0,0,0.24)',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 75%',
+        end: 'bottom 35%',
+        scrub: true
+      }
+    }
+  );
+}
+
+
+/**
+ * Anima tarjetas y formulario de contacto con stagger
+ */
+function animateContactCards() {
+  const cards = document.querySelectorAll('#contacto .contact-card');
+  const formShell = document.querySelector('#contacto .contact-form-shell');
+
+  if (prefersReducedMotion) {
+    gsap.set(cards, { opacity: 1, y: 0 });
+    if (formShell) gsap.set(formShell, { opacity: 1, y: 0, scale: 1 });
+    return;
+  }
+
+  if (cards.length) {
+    gsap.set(cards, { opacity: 1 });
+    gsap.from(cards, {
+      y: 28,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#contacto',
+        start: 'top 70%'
+      }
+    });
+  }
+
+  if (formShell) {
+    gsap.set(formShell, { opacity: 1 });
+    gsap.from(formShell, {
+      y: 26,
+      scale: 0.98,
+      duration: 0.7,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: formShell,
+        start: 'top 78%'
+      }
+    });
+  }
+}
+
+/**
+ * Anima items de la lista de servicios con stagger
+ */
+function animateServiceChecklist() {
+  const items = document.querySelectorAll('#servicios ul li');
+  if (!items.length) return;
+
+  if (prefersReducedMotion) {
+    gsap.set(items, { opacity: 1, x: 0, y: 0 });
+    return;
+  }
+
+  gsap.set(items, { opacity: 1 });
+  gsap.from(items, {
+    x: -18,
+    y: 8,
+    duration: 0.5,
+    stagger: 0.1,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '#servicios',
+      start: 'top 68%'
+    }
+  });
+}
+
+/**
+ * Entrada escalonada de campos del formulario de contacto
+ */
+function animateContactFormFields() {
+  const fields = document.querySelectorAll('#contacto form input, #contacto form textarea, #contacto form button');
+  if (!fields.length) return;
+
+  if (prefersReducedMotion) {
+    gsap.set(fields, { opacity: 1, y: 0, scale: 1 });
+    return;
+  }
+
+  gsap.set(fields, { opacity: 1 });
+  gsap.from(fields, {
+    y: 14,
+    scale: 0.985,
+    duration: 0.4,
+    stagger: 0.07,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '#contacto form',
+      start: 'top 80%'
+    }
+  });
+}
+
+/**
+ * Flotacion sutil del boton de WhatsApp
+ */
+function animateWhatsAppButton() {
+  const button = document.querySelector('.whatsapp-btn');
+  if (!button || prefersReducedMotion) return;
+
+  gsap.to(button, {
+    y: -7,
+    duration: 1.8,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut'
+  });
+}
+
+/**
+ * Estado activo de enlaces de navegacion segun seccion visible
+ */
+function initializeActiveNavState() {
+  const sections = [...document.querySelectorAll('section[id]')];
+  if (!sections.length) return;
+
+  const setActive = (id) => {
+    const allLinks = document.querySelectorAll('.nav-link, #mobileMenu a');
+    allLinks.forEach((link) => {
+      const isActive = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('is-active', isActive);
+    });
+  };
+
+  setActive('inicio');
+
+  sections.forEach((section) => {
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 45%',
+      end: 'bottom 45%',
+      onEnter: () => setActive(section.id),
+      onEnterBack: () => setActive(section.id)
+    });
+  });
+}
 
 /**
  * Maneja comportamiento del header al hacer scroll y hover
@@ -383,33 +741,35 @@ function initializeHeaderBehavior() {
 
   if (!header || !heroBg) return;
 
-  // Parallax y blur de la imagen del hero mientras se hace scroll dentro del hero
-  gsap.to(heroBg, {
-    yPercent: -8,
-    filter: 'blur(4px)',
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '#inicio',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true
-    }
-  });
+  if (!prefersReducedMotion) {
+    // Parallax y blur de la imagen del hero mientras se hace scroll dentro del hero
+    gsap.to(heroBg, {
+      yPercent: -8,
+      filter: 'blur(4px)',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#inicio',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
 
-  // Mover y desvanecer ligeramente el header conforme se hace scroll
-  gsap.to(header, {
-    y: -6,
-    opacity: 0.92,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '#inicio',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true
-    }
-  });
+    // Mover y desvanecer ligeramente el header conforme se hace scroll
+    gsap.to(header, {
+      y: -6,
+      opacity: 0.92,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#inicio',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+  }
 
-  // Toggle de clases según posición para contraste y estilos
+  // Toggle de clases segun posicion para contraste y estilos
   const threshold = 120;
   function onScrollToggle() {
     if (window.scrollY > threshold) {

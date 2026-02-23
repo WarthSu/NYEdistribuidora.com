@@ -3,6 +3,7 @@ import gsap from "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.min.js";
 import ScrollToPlugin from "https://cdn.jsdelivr.net/npm/gsap@3.12.2/ScrollToPlugin.min.js";
 
 gsap.registerPlugin(ScrollToPlugin);
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * Inicializa la animación del loader y muestra el contenido
@@ -21,6 +22,7 @@ function initializeLoaderAnimation() {
       if (app) app.style.visibility = 'visible';
       if (header) header.classList.add('visible');
       document.body.classList.remove('is-loading');
+      playHeroEntranceMotion();
     }, 2500);
     return;
   }
@@ -80,6 +82,7 @@ function initializeLoaderAnimation() {
             // quitar estado loading
             document.body.classList.remove('is-loading');
             document.body.removeAttribute('aria-busy');
+            playHeroEntranceMotion();
           }
         });
       }
@@ -208,6 +211,226 @@ function initializeHeaderScroll() {
   }, { passive: true });
 }
 
+/**
+ * Entrada principal del hero despues del loader
+ */
+function splitTextIntoWords(element) {
+  if (!element) return [];
+  if (element.dataset.wordsReady === 'true') {
+    return Array.from(element.querySelectorAll('.word-split'));
+  }
+
+  const rawText = (element.textContent || '').trim();
+  if (!rawText) return [];
+
+  const words = rawText.split(/\s+/);
+  const fragment = document.createDocumentFragment();
+  const wordNodes = [];
+
+  element.setAttribute('aria-label', rawText);
+
+  words.forEach((word, index) => {
+    const span = document.createElement('span');
+    span.className = 'word-split';
+    span.textContent = word;
+    span.setAttribute('aria-hidden', 'true');
+    fragment.appendChild(span);
+    wordNodes.push(span);
+
+    if (index < words.length - 1) {
+      fragment.appendChild(document.createTextNode(' '));
+    }
+  });
+
+  element.textContent = '';
+  element.appendChild(fragment);
+  element.dataset.wordsReady = 'true';
+  return wordNodes;
+}
+
+function playHeroEntranceMotion() {
+  const heroTitle = document.querySelector('.hero-title');
+  const heroSubtitle = document.querySelector('.hero-subtitle');
+  const heroCta = document.querySelector('.hero-cta');
+
+  if (!heroTitle) return;
+
+  const titleWords = splitTextIntoWords(heroTitle);
+  const subtitleWords = splitTextIntoWords(heroSubtitle);
+
+  if (prefersReducedMotion) {
+    gsap.set([heroTitle, heroSubtitle, heroCta], { autoAlpha: 1, y: 0 });
+    gsap.set([...titleWords, ...subtitleWords], { autoAlpha: 1, y: 0, filter: 'blur(0px)' });
+    return;
+  }
+
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+  tl.fromTo(
+    titleWords.length ? titleWords : heroTitle,
+    { autoAlpha: 0, y: 36, filter: 'blur(6px)' },
+    {
+      autoAlpha: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      duration: 0.62,
+      stagger: 0.045
+    }
+  );
+
+  if (heroSubtitle && subtitleWords.length) {
+    tl.fromTo(
+      subtitleWords,
+      { autoAlpha: 0, y: 20, filter: 'blur(4px)' },
+      { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 0.42, stagger: 0.03 },
+      '-=0.28'
+    );
+  } else if (heroSubtitle) {
+    tl.fromTo(
+      heroSubtitle,
+      { autoAlpha: 0, y: 24 },
+      { autoAlpha: 1, y: 0, duration: 0.5 },
+      '-=0.32'
+    );
+  }
+
+  if (heroCta) {
+    tl.fromTo(heroCta,
+      { autoAlpha: 0, y: 20, scale: 0.98 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.45 },
+      '-=0.2'
+    );
+  }
+}
+
+/**
+ * Microinteracciones de botones y CTA con hover
+ */
+function initializeButtonMotion() {
+  if (prefersReducedMotion || !window.matchMedia('(hover: hover)').matches) return;
+
+  const targets = document.querySelectorAll('.hero-cta, #servicios a[href="#contacto"], .whatsapp-btn, button[type="submit"]');
+
+  targets.forEach((target) => {
+    target.addEventListener('pointerenter', () => {
+      gsap.to(target, {
+        y: -3,
+        scale: 1.02,
+        duration: 0.2,
+        ease: 'power2.out',
+        overwrite: true
+      });
+    });
+
+    target.addEventListener('pointerleave', () => {
+      gsap.to(target, {
+        y: 0,
+        scale: 1,
+        duration: 0.25,
+        ease: 'power2.out',
+        overwrite: true
+      });
+    });
+  });
+}
+
+/**
+ * Parallax suave del hero segun la posicion del cursor
+ */
+function initializeHeroPointerParallax() {
+  const hero = document.getElementById('inicio');
+  const heroBg = hero?.querySelector('.hero-bg');
+
+  if (!hero || !heroBg) return;
+  if (prefersReducedMotion || !window.matchMedia('(hover: hover)').matches) return;
+
+  hero.addEventListener('pointermove', (event) => {
+    const rect = hero.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+    gsap.to(heroBg, {
+      x: x * 12,
+      y: y * 12,
+      duration: 0.6,
+      ease: 'power2.out',
+      overwrite: true
+    });
+  });
+
+  hero.addEventListener('pointerleave', () => {
+    gsap.to(heroBg, {
+      x: 0,
+      y: 0,
+      duration: 0.7,
+      ease: 'power2.out',
+      overwrite: true
+    });
+  });
+}
+
+/**
+ * Efecto tilt interactivo para tarjetas de contacto
+ */
+function initializeContactCardTilt() {
+  const cards = document.querySelectorAll('.contact-card');
+  if (!cards.length) return;
+  if (prefersReducedMotion || !window.matchMedia('(hover: hover)').matches) return;
+
+  cards.forEach((card) => {
+    card.addEventListener('pointermove', (event) => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+      gsap.to(card, {
+        rotationY: x * 8,
+        rotationX: -y * 7,
+        y: -4,
+        duration: 0.22,
+        transformPerspective: 700,
+        transformOrigin: 'center',
+        ease: 'power2.out',
+        overwrite: true
+      });
+    });
+
+    card.addEventListener('pointerleave', () => {
+      gsap.to(card, {
+        rotationY: 0,
+        rotationX: 0,
+        y: 0,
+        duration: 0.3,
+        ease: 'power2.out',
+        overwrite: true
+      });
+    });
+  });
+}
+
+/**
+ * Barra de progreso superior basada en scroll
+ */
+function initializeScrollProgress() {
+  const progressBar = document.getElementById('scroll-progress');
+  if (!progressBar) return;
+
+  const updateProgress = () => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+    gsap.to(progressBar, {
+      scaleX: progress,
+      duration: 0.12,
+      ease: 'none',
+      overwrite: true
+    });
+  };
+
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+}
+
 // Ejecución principal cuando el DOM esté listo
 function initializeContactForm() {
   const form = document.querySelector('form');
@@ -228,6 +451,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeDesktopNavigation();
   initializeHeaderScroll();
   initializeContactForm();
+  initializeButtonMotion();
+  initializeHeroPointerParallax();
+  initializeContactCardTilt();
+  initializeScrollProgress();
 });
 
 // Safety fallback: if for any reason `is-loading` permanece tras 4s, quitarlo para mostrar el contenido
@@ -238,5 +465,6 @@ setTimeout(() => {
     document.body.removeAttribute('aria-busy');
     const app = document.getElementById('app');
     if (app) app.style.visibility = 'visible';
+    playHeroEntranceMotion();
   }
 }, 4000);

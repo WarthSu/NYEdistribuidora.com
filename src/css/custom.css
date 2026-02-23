@@ -4,6 +4,20 @@
   --ne-dark: #07130b;
 }
 
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  z-index: 120;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #2cc36b, #87f5b3);
+  box-shadow: 0 2px 10px rgba(44, 195, 107, 0.45);
+  pointer-events: none;
+}
+
 /* ===== SCROLLBAR STYLING ===== */
 ::-webkit-scrollbar {
   width: 10px;
@@ -31,6 +45,59 @@
 
 .hero-subtitle {
   text-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+.typewriter-section {
+  min-height: 100svh;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 3vw, 3rem);
+}
+
+.typewriter-wrapper {
+  width: min(1100px, 94vw);
+  text-align: center;
+}
+
+.typewriter-text {
+  display: inline;
+  color: #14532d;
+  font-size: clamp(2.1rem, 6vw, 5.4rem);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 0.08em;
+  height: 0.95em;
+  margin-left: 0.08em;
+  background: #14532d;
+  vertical-align: -0.08em;
+  animation: typeBlink 1s steps(1) infinite;
+}
+
+@keyframes typeBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.typewriter-section.is-done .typewriter-cursor {
+  opacity: 1;
+}
+
+.motion-fade-up,
+.contact-card,
+.contact-form-shell {
+  will-change: transform, opacity, filter;
+}
+
+.word-split {
+  display: inline-block;
+  will-change: transform, opacity, filter;
 }
 
 /* ===== SCROLL FADE EFFECT ===== */
@@ -68,6 +135,14 @@
   width: 100%;
 }
 
+.nav-link.is-active {
+  color: #062f17;
+}
+
+.nav-link.is-active::after {
+  width: 100%;
+}
+
 /* ===== LOGO NAV LINK ===== */
 .logo-nav-link {
   display: flex;
@@ -100,7 +175,7 @@
 .nav-link { color: #0f4f2d; }
 .nav-link:hover { color: #062f17; }
 
-/* hamburguesa más visible */
+/* hamburguesa mas visible */
 #btnMenu span { background: #073d21; }
 
 /* ===== FOOTER ESTILOS ===== */
@@ -115,10 +190,10 @@
 /* ===== HEADER STATES (SCROLL / HOVER / OVER HERO) ===== */
 #site-header {
   transition: background-color .35s ease, transform .35s ease, box-shadow .35s ease, opacity .35s ease, backdrop-filter .35s ease;
-  background-color: rgba(255,255,255,0.08); /* ligeramente translúcido por defecto */
+  background-color: rgba(255,255,255,0.08); /* ligeramente translucido por defecto */
 }
 
-/* Cuando el header está encima del hero (al inicio): enlaces claros */
+/* Cuando el header esta encima del hero (al inicio): enlaces claros */
 .header-over-hero {
   background-color: rgba(8, 16, 10, 0.18); /* ligero tono oscuro para contraste con la imagen */
   backdrop-filter: blur(4px);
@@ -141,7 +216,7 @@
 }
 #site-header.header-hover .nav-link, #site-header:hover .nav-link { color: #062f17 !important; }
 
-/* Transición suave para la imagen del hero (usada por GSAP) */
+/* Transicion suave para la imagen del hero (usada por GSAP) */
 .hero-bg {
   transition: transform .3s ease, filter .3s ease;
 }
@@ -178,11 +253,16 @@ input:focus, textarea:focus {
 
 /* ===== MOBILE MENU OPEN STATE ===== */
 #mobileMenu {
-  /* right transition ya está aplicado con tailwind, pero aseguramos prioridad */
+  /* right transition ya esta aplicado con tailwind, pero aseguramos prioridad */
   transition: right 0.3s ease;
 }
 #mobileMenu.open {
   right: 0 !important;
+}
+
+#mobileMenu a.is-active {
+  color: #073d21;
+  transform: translateX(6px);
 }
 
 
@@ -201,7 +281,7 @@ body.is-loading main {
   visibility: hidden;
 }
 
-/* mantener visible sólo el logo pequeño del header (pero ocultar enlaces/texto) */
+/* mantener visible solo el logo pequeno del header (pero ocultar enlaces/texto) */
 body.is-loading .nav-link,
 body.is-loading #btnMenu {
   opacity: 0;
@@ -239,6 +319,15 @@ body.is-loading .logo-nav-link span {
   .nav-link {
     font-size: 0.95rem;
   }
+
+  .typewriter-section {
+    padding-inline: 1rem;
+  }
+
+  .typewriter-text {
+    font-size: clamp(1.65rem, 9vw, 2.8rem);
+    line-height: 1.18;
+  }
 }
 
 /* ===== IMAGE SEQUENCE STYLES ===== */
@@ -253,7 +342,7 @@ body.is-loading .logo-nav-link span {
 }
 @media (min-width: 769px) {
   .image-sequence {
-    height: 650px;
+    height: 720px;
   }
 }
 .image-column {
@@ -265,7 +354,7 @@ body.is-loading .logo-nav-link span {
 .text-column {
   width: 100%;
   min-width: 0;  /* Importante para overflow en grid */
-  max-height: 650px; /* altura balanceada con las imágenes */
+  max-height: 720px; /* altura balanceada con las imagenes */
   overflow-y: auto;
   padding-right: 0.75rem;
 }
@@ -281,8 +370,8 @@ body.is-loading .logo-nav-link span {
 /* No override grid - let Tailwind handle it */
 .image-text-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 3rem; /* aumento de 2rem a 3rem para más espaciamiento */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 3rem; /* aumento de 2rem a 3rem para mas espaciamiento */
 }
 
 /* Mobile: single column */
@@ -302,19 +391,30 @@ body.is-loading .logo-nav-link span {
   object-position: center;
   opacity: 1;  /* mostrar por defecto */
   filter: blur(0px);
-  transition: opacity .22s ease, filter .22s ease, transform .22s ease;
+  transition: opacity .38s cubic-bezier(.22,.61,.36,1), transform .38s cubic-bezier(.22,.61,.36,1), clip-path .38s cubic-bezier(.22,.61,.36,1);
   transform-origin: center center;
-  will-change: opacity, filter, transform;
+  will-change: opacity, transform, clip-path;
   z-index: 10;
   display: block;
 }
 
-/* Alinear Paisaje2 al borde derecho en pantallas grandes */
+/* Dar mas presencia visual a ambas secuencias en desktop */
 @media (min-width: 768px) {
   #nosotros-sequence {
-    width: 75vw;
-    max-width: 900px;
+    width: 100%;
+    max-width: 1100px;
     margin-left: auto; /* empuja a la derecha */
+  }
+
+  #servicios-sequence {
+    width: 100%;
+    max-width: 1100px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .image-text-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
   }
 }
 .image-sequence img.active { opacity: 1 !important; }
@@ -329,5 +429,17 @@ body.is-loading .logo-nav-link span {
 }
 #mobileMenu.open {
   right: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg,
+  .typewriter-cursor,
+  .contact-card,
+  .whatsapp-btn,
+  .nav-link,
+  #scroll-progress {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
