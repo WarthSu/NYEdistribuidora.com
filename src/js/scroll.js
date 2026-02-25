@@ -548,29 +548,58 @@ function setupImageSequence(sectionId, imagePaths) {
 function setupSingleImageMotion(section, container, img, sectionId) {
   if (!section || !container || !img) return;
 
+  const revealOffsetX = sectionId === 'servicios' ? -24 : 24;
+  const parallaxY = sectionId === 'servicios' ? -7 : -5;
+  const parallaxX = sectionId === 'servicios' ? -2.2 : 2.2;
+
+  gsap.set(container, {
+    transformPerspective: 1000,
+    transformStyle: 'preserve-3d'
+  });
+
   gsap.set(img, {
+    opacity: 0,
+    scale: 1.12,
+    x: revealOffsetX,
+    y: 38,
+    rotateX: sectionId === 'servicios' ? 2.4 : -2.4,
+    rotateY: sectionId === 'servicios' ? -1.4 : 1.4,
+    filter: 'blur(10px) saturate(0.88) brightness(0.92)',
+    clipPath: 'inset(16% 8% 16% 8% round 18px)',
+    transformOrigin: 'center center'
+  });
+
+  const revealTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: container,
+      start: 'top 82%',
+      once: true
+    }
+  });
+
+  revealTimeline.to(container, {
+    boxShadow: '0 24px 54px rgba(0,0,0,0.24)',
+    duration: 1.05,
+    ease: 'power2.out'
+  }, 0);
+
+  revealTimeline.to(img, {
     opacity: 1,
     scale: 1,
     x: 0,
     y: 0,
-    filter: 'none',
-    clipPath: 'inset(8% 3% 8% 3% round 12px)'
-  });
-
-  gsap.to(img, {
+    rotateX: 0,
+    rotateY: 0,
+    filter: 'blur(0px) saturate(1) brightness(1)',
     clipPath: 'inset(0% 0% 0% 0% round 12px)',
-    duration: 0.9,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: container,
-      start: 'top 82%',
-      toggleActions: 'play none none reverse'
-    }
-  });
+    duration: 1.2,
+    ease: 'power3.out'
+  }, 0);
 
   gsap.to(img, {
-    yPercent: sectionId === 'servicios' ? -6 : -4,
-    xPercent: sectionId === 'servicios' ? -1.5 : 1.5,
+    yPercent: parallaxY,
+    xPercent: parallaxX,
+    rotateZ: sectionId === 'servicios' ? -0.35 : 0.35,
     ease: 'none',
     scrollTrigger: {
       trigger: section,
@@ -583,7 +612,7 @@ function setupSingleImageMotion(section, container, img, sectionId) {
   gsap.fromTo(container,
     { boxShadow: '0 10px 24px rgba(0,0,0,0.16)' },
     {
-      boxShadow: '0 24px 48px rgba(0,0,0,0.24)',
+      boxShadow: '0 30px 62px rgba(0,0,0,0.25)',
       ease: 'none',
       scrollTrigger: {
         trigger: section,

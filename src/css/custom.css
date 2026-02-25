@@ -380,6 +380,13 @@ body.is-loading .logo-nav-link span {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
+  /* En movil, poner primero la imagen en "Quienes Somos" */
+  #nosotros .image-text-grid > :first-child {
+    order: 2;
+  }
+  #nosotros .image-text-grid > :last-child {
+    order: 1;
+  }
 }
 
 .image-sequence img {

@@ -433,17 +433,58 @@ function initializeScrollProgress() {
 
 // Ejecución principal cuando el DOM esté listo
 function initializeContactForm() {
-  const form = document.querySelector('form');
+  const form = document.querySelector('#contact-form');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  const status = document.getElementById('contact-form-status');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const defaultBtnLabel = submitBtn ? submitBtn.textContent.trim() : 'Enviar Mensaje';
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // si los campos son válidos (required+type) el navegador se encargará
-    alert('Gracias por tu mensaje. Nos pondremos en contacto pronto.');
-    form.reset();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+    }
+    if (status) status.textContent = 'Enviando mensaje...';
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method || 'POST',
+        body: new FormData(form),
+        headers: {
+          Accept: 'application/json'
+        }
+      });
+
+      const result = await response.json().catch(() => null);
+      const isSuccess = response.ok && result && (result.success === true || result.success === 'true');
+      if (!isSuccess) {
+        const detail = (result && (result.message || result.error)) ? String(result.message || result.error) : '';
+        throw new Error(detail || 'No se pudo enviar el formulario');
+      }
+
+      if (status) status.textContent = 'Mensaje enviado. Te responderemos pronto.';
+      form.reset();
+    } catch (error) {
+      console.error('[ContactForm] submit failed', error);
+      if (status) status.textContent = 'No se pudo enviar. Intenta de nuevo en unos minutos.';
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = defaultBtnLabel;
+        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+    }
   });
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   initializeLoaderAnimation();
   initializeLogoNavigation();
@@ -468,3 +509,4 @@ setTimeout(() => {
     playHeroEntranceMotion();
   }
 }, 4000);
+
